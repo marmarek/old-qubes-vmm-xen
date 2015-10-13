@@ -9,61 +9,9 @@ Based on gntalloc interface introduced in previous patch.
 
 Signed-off-by: Marek Marczykowski <marmarek@invisiblethingslab.com>
 ---
- extras/mini-os/include/lib.h |  3 +++
- extras/mini-os/lib/sys.c     |  4 ++++
  tools/libxc/xc_minios.c      | 55 ++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 62 insertions(+)
+ 1 files changed, 55 insertions(+)
 
-diff --git a/extras/mini-os/include/lib.h b/extras/mini-os/include/lib.h
-index 935bede..d664ded 100644
---- a/extras/mini-os/include/lib.h
-+++ b/extras/mini-os/include/lib.h
-@@ -54,6 +54,7 @@
- #include <xen/event_channel.h>
- #include <sys/queue.h>
- #include "gntmap.h"
-+#include "gntalloc.h"
- 
- #ifdef HAVE_LIBC
- #include <stdio.h>
-@@ -135,6 +136,7 @@ enum fd_type {
-     FTYPE_XC,
-     FTYPE_EVTCHN,
-     FTYPE_GNTMAP,
-+    FTYPE_GNTALLOC,
-     FTYPE_SOCKET,
-     FTYPE_TAP,
-     FTYPE_BLK,
-@@ -171,6 +173,7 @@ extern struct file {
- 	    struct evtchn_port_list ports;
- 	} evtchn;
- 	struct gntmap gntmap;
-+	struct gntalloc gntalloc;
- 	struct {
- 	    struct netfront_dev *dev;
- 	} tap;
-diff --git a/extras/mini-os/lib/sys.c b/extras/mini-os/lib/sys.c
-index cfbdc90..a62e039 100644
---- a/extras/mini-os/lib/sys.c
-+++ b/extras/mini-os/lib/sys.c
-@@ -88,6 +88,7 @@
- extern void minios_interface_close_fd(int fd);
- extern void minios_evtchn_close_fd(int fd);
- extern void minios_gnttab_close_fd(int fd);
-+extern void minios_gntalloc_close_fd(int fd);
- 
- pthread_mutex_t fd_lock = PTHREAD_MUTEX_INITIALIZER;
- struct file files[NOFILE] = {
-@@ -445,6 +446,9 @@ int close(int fd)
- 	case FTYPE_GNTMAP:
- 	    minios_gnttab_close_fd(fd);
- 	    return 0;
-+	case FTYPE_GNTALLOC:
-+	    minios_gntalloc_close_fd(fd);
-+	    return 0;
- #endif
- #ifdef CONFIG_NETFRONT
- 	case FTYPE_TAP:
 diff --git a/tools/libxc/xc_minios.c b/tools/libxc/xc_minios.c
 index dec4d73..01a1266 100644
 --- a/tools/libxc/xc_minios.c

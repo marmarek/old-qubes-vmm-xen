@@ -4,8 +4,8 @@
  all: build
  .PHONY: build
  build:
--	CC="$(CC)" CFLAGS="$(CFLAGS)" $(PYTHON) setup.py build
-+	CC="$(CC)" CFLAGS="$(CFLAGS)" $(PYTHON_PATH) setup.py build
+-	CC="$(CC)" CFLAGS="$(PY_CFLAGS)" $(PYTHON) setup.py build
++	CC="$(CC)" CFLAGS="$(PY_CFLAGS)" $(PYTHON_PATH) setup.py build
  
  .PHONY: install
  install: all

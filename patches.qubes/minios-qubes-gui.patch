@@ -1,0 +1,12 @@
+--- a/extras/mini-os/Makefile	2011-06-14 18:03:43.000000000 +0200
++++ b/extras/mini-os/Makefile	2012-02-18 01:05:39.288000355 +0100
+@@ -83,6 +83,9 @@
+ APP_LDLIBS += -lpci
+ APP_LDLIBS += -lz
+ APP_LDLIBS += -lm
++ifeq ($(vchan),y)
++APP_LDLIBS += -L$(XEN_ROOT)/stubdom/vchan-$(XEN_TARGET_ARCH) -lvchan -L$(XEN_ROOT)/stubdom/libvchan-$(XEN_TARGET_ARCH) -lxenvchan
++endif
+ LDLIBS += -lc
+ endif
+ 

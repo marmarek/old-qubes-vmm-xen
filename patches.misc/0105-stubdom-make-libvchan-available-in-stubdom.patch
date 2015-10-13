@@ -1,9 +1,9 @@
-From 424f0e7d690418067e13e01496a75cfd1442e41f Mon Sep 17 00:00:00 2001
+From e5dc23a5539f3d64881b5b26efb5f0f76292ba25 Mon Sep 17 00:00:00 2001
 From: Marek Marczykowski <marmarek@invisiblethingslab.com>
 Date: Mon, 22 Apr 2013 04:10:10 +0200
-Subject: [PATCH 105/105] stubdom: make libvchan available in stubdom
+Subject: [PATCH] stubdom: make libvchan available in stubdom
 Organization: Invisible Things Lab
-Cc: Marek Marczykowski <marmarek@invisiblethingslab.com>
+Cc: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
 
 Add CONFIG_VCHAN to enable libvchan build for stubdom. By default
 disabled in all cases, but one can enable it when needed.
@@ -14,16 +14,15 @@ stubdom/Makefile
 
 Signed-off-by: Marek Marczykowski <marmarek@invisiblethingslab.com>
 ---
- .gitignore              |  1 +
- extras/mini-os/Makefile |  5 +++++
- stubdom/Makefile        | 14 ++++++++++++++
- 3 files changed, 20 insertions(+)
+ .gitignore       |  1 +
+ stubdom/Makefile | 14 ++++++++++++++
+ 2 files changed, 15 insertions(+)
 
 diff --git a/.gitignore b/.gitignore
-index 6753368..d7787ff 100644
+index 9ead7c4..0f9f0da 100644
 --- a/.gitignore
 +++ b/.gitignore
-@@ -128,6 +128,7 @@
+@@ -72,6 +72,7 @@ stubdom/ocaml-*
  stubdom/polarssl-*
  stubdom/gmp-*
  stubdom/tpm_emulator-*
@@ -31,35 +30,12 @@ index 6753368..d7787ff 100644
  stubdom/lwip/
  stubdom/ioemu/
  stubdom/stubdompath.sh
-diff --git a/extras/mini-os/Makefile b/extras/mini-os/Makefile
-index 658c159..e4f7a61 100644
---- a/extras/mini-os/Makefile
-+++ b/extras/mini-os/Makefile
-@@ -32,6 +32,7 @@ CONFIG_CONSFRONT ?= y
- CONFIG_XENBUS ?= y
- CONFIG_XC ?=y
- CONFIG_LWIP ?= $(lwip)
-+CONFIG_VCHAN ?= n
- 
- # Export config items as compiler directives
- flags-$(CONFIG_START_NETWORK) += -DCONFIG_START_NETWORK
-@@ -164,6 +165,10 @@ APP_LDLIBS += -lm
- LDLIBS += -lc
- endif
- 
-+ifeq ($(CONFIG_VCHAN),y)
-+APP_LDLIBS += -L$(XEN_ROOT)/stubdom/libvchan-$(XEN_TARGET_ARCH) -lxenvchan
-+endif
-+
- ifneq ($(APP_OBJS)-$(lwip),-y)
- OBJS := $(filter-out $(OBJ_DIR)/daytime.o, $(OBJS))
- endif
 diff --git a/stubdom/Makefile b/stubdom/Makefile
-index a2ac044..4640d8d 100644
+index e1359cf..2918ee6 100644
 --- a/stubdom/Makefile
 +++ b/stubdom/Makefile
-@@ -309,6 +309,11 @@ mk-headers-$(XEN_TARGET_ARCH): ioemu/linkfarm.stamp
- 	  ln -sf $(XEN_ROOT)/tools/libxc/*.h . && \
+@@ -319,6 +319,11 @@ mk-headers-$(XEN_TARGET_ARCH): $(IOEMU_LINKFARM_TARGET)
+ 	  ln -sf $(XEN_ROOT)/tools/libxc/include/*.h . && \
  	  ln -sf $(XEN_ROOT)/tools/libxc/*.c . && \
  	  ln -sf $(XEN_ROOT)/tools/libxc/Makefile . )
 +	mkdir -p libvchan-$(XEN_TARGET_ARCH)
@@ -70,7 +46,7 @@ index a2ac044..4640d8d 100644
  	mkdir -p xenstore
  	[ -h xenstore/Makefile ] || ( cd xenstore && \
  	  ln -sf $(XEN_ROOT)/tools/xenstore/*.c . && \
-@@ -336,6 +341,15 @@ libxc-$(XEN_TARGET_ARCH)/libxenctrl.a: cross-zlib
+@@ -349,6 +354,15 @@ libxc-$(XEN_TARGET_ARCH)/libxenctrl.a: cross-zlib
   libxc-$(XEN_TARGET_ARCH)/libxenguest.a: libxc-$(XEN_TARGET_ARCH)/libxenctrl.a
  
  #######
@@ -87,5 +63,5 @@ index a2ac044..4640d8d 100644
  #######
  
 -- 
-1.8.1.4
+2.1.0
 

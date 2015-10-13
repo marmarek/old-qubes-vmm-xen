@@ -9,14 +9,6 @@
  #modules.extend([ xl ])
  if plat == 'SunOS':
      modules.extend([ scf, process ])
-@@ -132,6 +132,7 @@
-       description     = 'Xen',
-       packages        = ['xen',
-                          'xen.lowlevel',
-+                         'xen.util',
-                          ] + xend_packages,
-       ext_package = "xen.lowlevel",
-       ext_modules = modules
 --- xen-4.4.0/tools/Makefile.orig	2014-06-25 03:41:25.719847445 +0200
 +++ xen-4.4.0/tools/Makefile	2014-06-25 03:42:59.854386037 +0200
 @@ -4,47 +4,13 @@
