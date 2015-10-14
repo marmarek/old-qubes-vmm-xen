@@ -1,0 +1,68 @@
+From 938e3d20b4c8ce66f67db7883e57a3d2972fb449 Mon Sep 17 00:00:00 2001
+From: Marek Marczykowski <marmarek@invisiblethingslab.com>
+Date: Tue, 23 Apr 2013 05:17:59 +0200
+Subject: [PATCH] minios: implement gntshr for minios
+Organization: Invisible Things Lab
+Cc: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
+
+Based on gntalloc interface introduced in previous patch.
+
+Signed-off-by: Marek Marczykowski <marmarek@invisiblethingslab.com>
+---
+ extras/mini-os/include/lib.h | 3 +++
+ extras/mini-os/lib/sys.c     | 4 ++++
+ 2 files changed, 7 insertions(+)
+
+diff --git a/extras/mini-os/include/lib.h b/extras/mini-os/include/lib.h
+index 62836c7..7e42509 100644
+--- a/extras/mini-os/include/lib.h
++++ b/extras/mini-os/include/lib.h
+@@ -53,6 +53,7 @@
+ #include <xen/xen.h>
+ #include <xen/event_channel.h>
+ #include "gntmap.h"
++#include "gntalloc.h"
+ 
+ #if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
+ #define BUILD_BUG_ON(cond) ({ _Static_assert(!(cond), "!(" #cond ")"); })
+@@ -144,6 +145,7 @@ enum fd_type {
+     FTYPE_XC,
+     FTYPE_EVTCHN,
+     FTYPE_GNTMAP,
++    FTYPE_GNTALLOC,
+     FTYPE_SOCKET,
+     FTYPE_TAP,
+     FTYPE_BLK,
+@@ -180,6 +182,7 @@ extern struct file {
+ 	    struct evtchn_port_list ports;
+ 	} evtchn;
+ 	struct gntmap gntmap;
++	struct gntalloc gntalloc;
+ 	struct {
+ 	    struct netfront_dev *dev;
+ 	} tap;
+diff --git a/extras/mini-os/lib/sys.c b/extras/mini-os/lib/sys.c
+index f8d7a7c..2c26e44 100644
+--- a/extras/mini-os/lib/sys.c
++++ b/extras/mini-os/lib/sys.c
+@@ -88,6 +88,7 @@
+ extern void minios_interface_close_fd(int fd);
+ extern void minios_evtchn_close_fd(int fd);
+ extern void minios_gnttab_close_fd(int fd);
++extern void minios_gntalloc_close_fd(int fd);
+ 
+ pthread_mutex_t fd_lock = PTHREAD_MUTEX_INITIALIZER;
+ struct file files[NOFILE] = {
+@@ -445,6 +446,9 @@ int close(int fd)
+ 	case FTYPE_GNTMAP:
+ 	    minios_gnttab_close_fd(fd);
+ 	    return 0;
++	case FTYPE_GNTALLOC:
++	    minios_gntalloc_close_fd(fd);
++	    return 0;
+ #endif
+ #ifdef CONFIG_NETFRONT
+ 	case FTYPE_TAP:
+-- 
+2.1.0
+

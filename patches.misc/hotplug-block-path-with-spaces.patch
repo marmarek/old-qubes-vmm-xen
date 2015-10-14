@@ -1,13 +1,27 @@
+From 8533a805493bf83cf2274000c8505995a2b1f441 Mon Sep 17 00:00:00 2001
+From: qubesuser <qubesuser@users.noreply.github.com>
+Date: Tue, 13 Oct 2015 20:40:36 +0200
+Subject: [PATCH] hotplug-block-path-with-spaces
+Organization: Invisible Things Lab
+Cc: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
+
+---
+ tools/hotplug/Linux/block | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
 diff --git a/tools/hotplug/Linux/block b/tools/hotplug/Linux/block
-index da26e22..a24052b 100644
+index 8d2ee9d..d4df5b8 100644
 --- a/tools/hotplug/Linux/block
 +++ b/tools/hotplug/Linux/block
-@@ -233,7 +233,7 @@ case "$command" in
+@@ -230,7 +230,7 @@ case "$command" in
  
-     case $t in 
-       phy|file)
+     case $truetype in
+       phy)
 -        dev=$(expand_dev $p)
 +        dev=$(expand_dev "$p")
  
          if [ -L "$dev" ]
          then
+-- 
+2.1.0
+

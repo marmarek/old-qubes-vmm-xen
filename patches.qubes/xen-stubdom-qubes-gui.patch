@@ -1,7 +1,20 @@
---- a/stubdom/Makefile.orig	2012-02-21 15:42:20.364000956 +0100
-+++ b/stubdom/Makefile	2012-02-21 15:43:40.916001086 +0100
-@@ -245,6 +245,11 @@
- 	  ln -sf $(XEN_ROOT)/tools/libxc/*.h . && \
+From 125bd6b57349171176ac752e08db67de251b9d4d Mon Sep 17 00:00:00 2001
+From: qubesuser <qubesuser@users.noreply.github.com>
+Date: Tue, 13 Oct 2015 20:11:22 +0200
+Subject: [PATCH] xen-stubdom-qubes-gui
+Organization: Invisible Things Lab
+Cc: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
+
+---
+ stubdom/Makefile | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/stubdom/Makefile b/stubdom/Makefile
+index 2918ee6..ad718cc 100644
+--- a/stubdom/Makefile
++++ b/stubdom/Makefile
+@@ -319,6 +319,11 @@ mk-headers-$(XEN_TARGET_ARCH): $(IOEMU_LINKFARM_TARGET)
+ 	  ln -sf $(XEN_ROOT)/tools/libxc/include/*.h . && \
  	  ln -sf $(XEN_ROOT)/tools/libxc/*.c . && \
  	  ln -sf $(XEN_ROOT)/tools/libxc/Makefile . )
 +	mkdir -p vchan-$(XEN_TARGET_ARCH)
@@ -12,7 +25,7 @@
  	mkdir -p libvchan-$(XEN_TARGET_ARCH)
  	[ -h libvchan-$(XEN_TARGET_ARCH) ] || ( cd libvchan-$(XEN_TARGET_ARCH) && \
  	  ln -sf $(XEN_ROOT)/tools/libvchan/*.c . && \
-@@ -267,6 +272,15 @@
+@@ -354,6 +359,15 @@ libxc-$(XEN_TARGET_ARCH)/libxenctrl.a: cross-zlib
   libxc-$(XEN_TARGET_ARCH)/libxenguest.a: libxc-$(XEN_TARGET_ARCH)/libxenctrl.a
  
  #######
@@ -28,26 +41,17 @@
  # libvchan
  #######
  
-@@ -321,8 +335,8 @@
+@@ -445,8 +459,8 @@ xenstore: $(CROSS_ROOT)
  
  .PHONY: ioemu-stubdom
  ioemu-stubdom: APP_OBJS=$(CURDIR)/ioemu/i386-stubdom/qemu.a $(CURDIR)/ioemu/i386-stubdom/libqemu.a $(CURDIR)/ioemu/libqemu_common.a
 -ioemu-stubdom: mini-os-$(XEN_TARGET_ARCH)-ioemu lwip-$(XEN_TARGET_ARCH) libxc ioemu
-+ioemu-stubdom: mini-os-$(XEN_TARGET_ARCH)-ioemu lwip-$(XEN_TARGET_ARCH) libxc ioemu vchan libvchan
 -	DEF_CPPFLAGS="$(TARGET_CPPFLAGS)" DEF_CFLAGS="$(TARGET_CFLAGS)" DEF_LDFLAGS="$(TARGET_LDFLAGS)" MINIOS_CONFIG="$(CURDIR)/ioemu-minios.cfg" $(MAKE) DESTDIR= -C $(MINI_OS) OBJ_DIR=$(CURDIR)/$< LWIPDIR=$(CURDIR)/lwip-$(XEN_TARGET_ARCH) APP_OBJS="$(APP_OBJS)"
++ioemu-stubdom: mini-os-$(XEN_TARGET_ARCH)-ioemu lwip-$(XEN_TARGET_ARCH) libxc ioemu vchan libvchan
 +	DEF_CPPFLAGS="$(TARGET_CPPFLAGS)" DEF_CFLAGS="$(TARGET_CFLAGS)" DEF_LDFLAGS="$(TARGET_LDFLAGS)" MINIOS_CONFIG="$(CURDIR)/ioemu-minios.cfg" $(MAKE) DESTDIR= -C $(MINI_OS) OBJ_DIR=$(CURDIR)/$< LWIPDIR=$(CURDIR)/lwip-$(XEN_TARGET_ARCH) APP_OBJS="$(APP_OBJS)" vchan=y
  
  .PHONY: caml-stubdom
  caml-stubdom: mini-os-$(XEN_TARGET_ARCH)-caml lwip-$(XEN_TARGET_ARCH) libxc cross-ocaml caml
---- a/extras/mini-os/Makefile	2011-06-14 18:03:43.000000000 +0200
-+++ b/extras/mini-os/Makefile	2012-02-18 01:05:39.288000355 +0100
-@@ -83,6 +83,9 @@
- APP_LDLIBS += -lpci
- APP_LDLIBS += -lz
- APP_LDLIBS += -lm
-+ifeq ($(vchan),y)
-+APP_LDLIBS += -L$(XEN_ROOT)/stubdom/vchan-$(XEN_TARGET_ARCH) -lvchan -L$(XEN_ROOT)/stubdom/libvchan-$(XEN_TARGET_ARCH) -lxenvchan
-+endif
- LDLIBS += -lc
- endif
- 
+-- 
+2.1.0
+
