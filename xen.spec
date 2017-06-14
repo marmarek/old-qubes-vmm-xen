@@ -148,6 +148,7 @@ BuildRequires: systemd
 BuildRequires: systemd-devel
 # BIOS for HVMs
 Requires: seabios-bin
+Requires: edk2-ovmf
 
 %description
 This package contains the XenD daemon and xm command line
@@ -355,6 +356,7 @@ make %{?_smp_mflags} %{?efi_flags} prefix=/usr dist-xen
     --libdir=%{_libdir} \
     --libexecdir=/usr/lib \
     --with-system-seabios=%{seabiosloc} \
+    --with-system-ovmf=/usr/share/edk2/ovmf/OVMF.fd \
     --enable-vtpm-stubdom \
     --enable-vtpmmgr-stubdom \
     --with-extra-qemuu-configure-args="--disable-spice"
@@ -572,6 +574,14 @@ fi
 %postun ocaml
 %systemd_postun
 %endif
+
+%triggerin hvm -- edk2-ovmf
+# Package in Fedora does not ship combined binary, we need to prepare it
+# ourself
+cd /usr/share/edk2/ovmf
+if [ ! -e OVMF.fd -o OVMF_CODE.fd -nt OVMF.fd ]; then
+    cat OVMF_VARS.fd OVMF_CODE.fd > OVMF.fd
+fi
 
 %clean
 rm -rf %{buildroot}
